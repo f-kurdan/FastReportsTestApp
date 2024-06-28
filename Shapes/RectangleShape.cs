@@ -35,4 +35,23 @@ public class RectangleShape : Shape
         Width = newLocation.X - Location.X;
         Height = newLocation.Y - Location.Y;
     }
+
+    public override void DrawSelectionOutline(Graphics g)
+    {
+        // Рисуем контур выделения
+        using (Pen outlinePen = new Pen(Color.Red, 2))
+        {
+            outlinePen.DashStyle = DashStyle.Dash;
+            g.DrawRectangle(outlinePen, Location.X - 2, Location.Y - 2, Width + 4, Height + 4);
+        }
+
+        // Рисуем маркеры на углах
+        using (SolidBrush markerBrush = new SolidBrush(Color.Red))
+        {
+            g.FillRectangle(markerBrush, Location.X - 3, Location.Y - 3, 6, 6);
+            g.FillRectangle(markerBrush, Location.X + Width - 3, Location.Y - 3, 6, 6);
+            g.FillRectangle(markerBrush, Location.X - 3, Location.Y + Height - 3, 6, 6);
+            g.FillRectangle(markerBrush, Location.X + Width - 3, Location.Y + Height - 3, 6, 6);
+        }
+    }
 }

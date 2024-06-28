@@ -19,17 +19,10 @@ public class DrawingPanel : Panel
         Paint += HandlePaint;
     }
 
-    public List<Shape> Shapes
-    {
-        get { return _shapes; }
-        set { _shapes = value; }
-    }
+    public List<Shape> Shapes { get;  }
 
-    public Shape SelectedShape
-    {
-        get { return _selectedShape; }
-        set { _selectedShape = value; }
-    }
+    public Shape SelectedShape { get; set; }
+
 
     // Добавить фигуру на панель
     public void AddShape(Shape shape)
@@ -61,16 +54,11 @@ public class DrawingPanel : Panel
         foreach (var shape in _shapes)
         {
             shape.Draw(e.Graphics);
+        }
 
-            // Отрисовка выделения для выбранной фигуры
-            if (shape.IsSelected)
-            {
-                using (var pen = new Pen(Color.Black, 2))
-                {
-                    var rect = new Rectangle(shape.Location.X - 2, shape.Location.Y - 2, shape.Location.X + 2, shape.Location.Y + 2);
-                    e.Graphics.DrawRectangle(pen, rect);
-                }
-            }
+        if (_selectedShape != null)
+        {
+            _selectedShape.DrawSelectionOutline(e.Graphics);
         }
 
         // Отрисовка линий, соединяющих выбранную фигуру с другими фигурами
@@ -89,18 +77,19 @@ public class DrawingPanel : Panel
     // Обработчик события нажатия мыши
     private void HandleMouseDown(object sender, MouseEventArgs e)
     {
-        _mouseDownPoint = e.Location; // Сохранить точку нажатия
-        _selectedShape = null; // Сбросить выделение
+        _mouseDownPoint = e.Location;
 
-        // Проверка, была ли нажата фигура
-        foreach (var shape in _shapes)
+        _selectedShape = null;
+        for (int i = _shapes.Count - 1; i >= 0; i--)
         {
-            if (shape.ContainsPoint(e.Location))
+            if (_shapes[i].ContainsPoint(e.Location))
             {
-                _selectedShape = shape; // Выделить фигуру
+                _selectedShape = _shapes[i];
                 break;
             }
         }
+
+        Invalidate();
     }
 
     // Обработчик события движения мыши
@@ -140,5 +129,16 @@ public class DrawingPanel : Panel
                 }
             }
         }
+    }
+
+    public void SelectShapeAt(Point point)
+    {
+        SelectedShape = _shapes.FirstOrDefault(shape => shape.ContainsPoint(point));
+        Invalidate();
+    }
+
+    public void RedrawShapes()
+    {
+        Invalidate();
     }
 }

@@ -6,12 +6,34 @@ public partial class MainForm : Form
 {
     private DrawingPanel _drawingPanel;
 
+    private void ChangeShapeColor(Shape shape)
+    {
+        using (ColorDialog fillColorDialog = new ColorDialog())
+        {
+            if (fillColorDialog.ShowDialog() == DialogResult.OK)
+            {
+                using (ColorDialog borderColorDialog = new ColorDialog())
+                {
+                    if (borderColorDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        shape.ChangeColor(fillColorDialog.Color, borderColorDialog.Color);
+                        _drawingPanel.Invalidate(); // Перерисовать панель
+                    }
+                }
+            }
+        }
+    }
+
     public MainForm()
     {
         InitializeComponent();
 
         _drawingPanel = new DrawingPanel();
         _drawingPanel.Dock = DockStyle.Fill;
+        _drawingPanel.MouseDown += (sender, e) =>
+        {
+            _drawingPanel.SelectShapeAt(e.Location);
+        };
         Controls.Add(_drawingPanel);
     }
 
@@ -21,6 +43,8 @@ public partial class MainForm : Form
         addTriangleButton_Click = new Button();
         addCircleButton_Click = new Button();
         сlearButton_Click = new Button();
+        changeColorButton = new Button();
+        button1 = new Button();
         SuspendLayout();
         // 
         // addRectangleButton_Click
@@ -53,7 +77,7 @@ public partial class MainForm : Form
         addCircleButton_Click.UseVisualStyleBackColor = true;
         addCircleButton_Click.Click += AddCircleButton_Click;
         // 
-        // button1
+        // сlearButton_Click
         // 
         сlearButton_Click.Location = new Point(649, 209);
         сlearButton_Click.Name = "сlearButton_Click";
@@ -63,9 +87,30 @@ public partial class MainForm : Form
         сlearButton_Click.UseVisualStyleBackColor = true;
         сlearButton_Click.Click += ClearButton_Click;
         // 
+        // changeColorButton
+        // 
+        changeColorButton.Location = new Point(649, 268);
+        changeColorButton.Name = "changeColorButton";
+        changeColorButton.Size = new Size(139, 53);
+        changeColorButton.TabIndex = 4;
+        changeColorButton.Text = "Изменить цвет";
+        changeColorButton.UseVisualStyleBackColor = true;
+        changeColorButton.Click += ChangeColorButton_Click;
+        // 
+        // button1
+        // 
+        button1.Location = new Point(649, 268);
+        button1.Name = "button1";
+        button1.Size = new Size(139, 53);
+        button1.TabIndex = 4;
+        button1.Text = "Изменить цвет";
+        button1.UseVisualStyleBackColor = true;
+        button1.Click += ChangeColorButton_Click;
+        // 
         // MainForm
         // 
         ClientSize = new Size(800, 450);
+        Controls.Add(button1);
         Controls.Add(сlearButton_Click);
         Controls.Add(addCircleButton_Click);
         Controls.Add(addTriangleButton_Click);
@@ -78,28 +123,78 @@ public partial class MainForm : Form
     private void AddRectangleButton_Click(object? sender, EventArgs e)
     {
         var rectangle = new RectangleShape(Color.Blue, Color.Black, 2, new Point(100, 100), 50, 50);
+        ChangeShapeColor(rectangle);
         _drawingPanel.AddShape(rectangle);
     }
 
     private void AddCircleButton_Click(object? sender, EventArgs e)
     {
         var circle = new Circle(Color.Green, Color.Black, 2, new Point(200, 200), 30);
+        ChangeShapeColor(circle);
         _drawingPanel.AddShape(circle);
     }
 
     private void AddTriangleButton_Click(object? sender, EventArgs e)
     {
         var triangle = new TriangleShape(Color.Red, Color.Black, 2, new Point(300, 300), 40, 0);
+        ChangeShapeColor(triangle);
         _drawingPanel.AddShape(triangle);
     }
 
-    private void ClearButton_Click(object sender, EventArgs e)
+    private void ClearButton_Click(object? sender, EventArgs e)
     {
         _drawingPanel.ClearShapes();
+    }
+
+    private void ChangeColorButton_Click(object sender, EventArgs e)
+    {
+        if (_drawingPanel.SelectedShape != null)
+        {
+            using (var colorDialog = new ColorDialog())
+            {
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _drawingPanel.SelectedShape.FillColor = colorDialog.Color;
+                    _drawingPanel.Invalidate();
+                }
+            }
+        }
+        else
+        {
+            MessageBox.Show("Сначала выберите фигуру.");
+        }
+    }
+
+    private void ChangeFillColor(Shape shape)
+    {
+        using (var colorDialog = new ColorDialog())
+        {
+            colorDialog.Color = shape.FillColor;
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                shape.FillColor = colorDialog.Color;
+                _drawingPanel.Invalidate();
+            }
+        }
+    }
+
+    private void ChangeBorderColor(Shape shape)
+    {
+        using (var colorDialog = new ColorDialog())
+        {
+            colorDialog.Color = shape.BorderColor;
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                shape.BorderColor = colorDialog.Color;
+                _drawingPanel.Invalidate();
+            }
+        }
     }
 
     private Button addTriangleButton_Click;
     private Button addCircleButton_Click;
     private Button сlearButton_Click;
     private Button addRectangleButton_Click;
+    private Button button1;
+    private Button changeColorButton;
 }

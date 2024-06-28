@@ -47,6 +47,20 @@ public abstract class Shape
         }
     }
 
+    public virtual void ChangeColor(Color newFillColor, Color newBorderColor)
+    {
+        FillColor = newFillColor;
+        BorderColor = newBorderColor;
+    }
+
+    public virtual void DrawSelectionOutline(Graphics g)
+    {
+        using (var pen = new Pen(Color.Red, 2))
+        {
+            g.DrawRectangle(pen, Location.X - 2, Location.Y - 2, Width + 4, Height + 4);
+        }
+    }
+
     // Добавляем свойство IsMoved в класс Shape
     private bool IsMoved { get; set; } = false;
 

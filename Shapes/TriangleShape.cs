@@ -95,4 +95,29 @@ public class TriangleShape : Shape
         points[1] = new PointF(Location.X, Location.Y + (float)(SideLength * Math.Sqrt(3) / 2)); // Левая нижняя вершина
         points[2] = new PointF(Location.X + SideLength, Location.Y + (float)(SideLength * Math.Sqrt(3) / 2)); // Правая нижняя вершина
     }
+
+    public override void DrawSelectionOutline(Graphics g)
+    {
+        // Вычисляем координаты вершин треугольника
+        PointF[] points = new PointF[3];
+        points[0] = new PointF(Location.X + SideLength / 2, Location.Y);
+        points[1] = new PointF(Location.X, Location.Y + (float)(SideLength * Math.Sqrt(3) / 2));
+        points[2] = new PointF(Location.X + SideLength, Location.Y + (float)(SideLength * Math.Sqrt(3) / 2));
+
+        // Рисуем контур выделения
+        using (Pen outlinePen = new Pen(Color.Red, 2))
+        {
+            outlinePen.DashStyle = DashStyle.Dash;
+            g.DrawPolygon(outlinePen, points);
+        }
+
+        // Рисуем маркеры на вершинах
+        using (SolidBrush markerBrush = new SolidBrush(Color.Red))
+        {
+            foreach (PointF point in points)
+            {
+                g.FillEllipse(markerBrush, point.X - 3, point.Y - 3, 6, 6);
+            }
+        }
+    }
 }

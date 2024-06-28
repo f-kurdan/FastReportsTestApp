@@ -34,4 +34,12 @@ public class Circle : Shape
     {
         Radius = (int)Math.Sqrt((newLocation.X - Location.X) * (newLocation.X - Location.X) + (newLocation.Y - Location.Y) * (newLocation.Y - Location.Y));
     }
+
+    public override void DrawSelectionOutline(Graphics g)
+    {
+        using (var pen = new Pen(Color.Red, 2))
+        {
+            g.DrawEllipse(pen, Location.X - Radius - 2, Location.Y - Radius - 2, 2 * Radius + 4, 2 * Radius + 4);
+        }
+    }
 }
