@@ -48,29 +48,18 @@ public class DrawingPanel : Panel
     // Обработчик события отрисовки
     private void HandlePaint(object sender, PaintEventArgs e)
     {
-        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias; // Включить сглаживание для более качественной отрисовки
+        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-        // Отрисовка всех фигур на панели
         foreach (var shape in _shapes)
         {
             shape.Draw(e.Graphics);
         }
 
-        if (_selectedShape != null)
-        {
-            _selectedShape.DrawSelectionOutline(e.Graphics);
-        }
+        DrawConnectionLines(e.Graphics);
 
-        // Отрисовка линий, соединяющих выбранную фигуру с другими фигурами
-        if (_selectedShape != null && _selectedShape.ConnectedShapes.Count > 0)
+        if (SelectedShape != null)
         {
-            using (var pen = new Pen(Color.Black, 2))
-            {
-                foreach (var connectedShape in _selectedShape.ConnectedShapes)
-                {
-                    e.Graphics.DrawLine(pen, _selectedShape.Location, connectedShape.Location);
-                }
-            }
+            SelectedShape.DrawSelectionOutline(e.Graphics);
         }
     }
 
@@ -140,5 +129,20 @@ public class DrawingPanel : Panel
     public void RedrawShapes()
     {
         Invalidate();
+    }
+
+    private void DrawConnectionLines(Graphics g)
+    {
+        if (_shapes.Count < 2) return;
+
+        using (Pen pen = new Pen(Color.Black, 1))
+        {
+            for (int i = 0; i < _shapes.Count - 1; i++)
+            {
+                PointF start = _shapes[i].GetCenter();
+                PointF end = _shapes[i + 1].GetCenter();
+                g.DrawLine(pen, start, end);
+            }
+        }
     }
 }

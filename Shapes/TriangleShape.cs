@@ -120,4 +120,12 @@ public class TriangleShape : Shape
             }
         }
     }
+
+    public override PointF GetCenter()
+    {
+        return new PointF(
+            Location.X + SideLength / 2f,
+            Location.Y + (float)(SideLength * Math.Sqrt(3) / 4)
+        );
+    }
 }

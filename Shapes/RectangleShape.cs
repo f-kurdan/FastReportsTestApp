@@ -54,4 +54,9 @@ public class RectangleShape : Shape
             g.FillRectangle(markerBrush, Location.X + Width - 3, Location.Y + Height - 3, 6, 6);
         }
     }
+
+    public override PointF GetCenter()
+    {
+        return new PointF(Location.X + Width / 2f, Location.Y + Height / 2f);
+    }
 }

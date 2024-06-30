@@ -75,4 +75,9 @@ public abstract class Shape
         ConnectedShapes.Remove(shape);
         shape.ConnectedShapes.Remove(this);
     }
+
+    public virtual PointF GetCenter()
+    {
+        return new PointF(Location.X + Width / 2f, Location.Y + Height / 2f);
+    }
 }
